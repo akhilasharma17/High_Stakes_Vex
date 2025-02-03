@@ -1,16 +1,16 @@
 {
 	"extension": {
-		"version": "0.6.0",
+		"version": "0.6.1",
 		"json": 2
 	},
 	"project": {
-		"name": "Alucard",
+		"name": "AlucardA",
 		"description": "",
-		"creationDate": "7/27/2024, 10:19:05 AM",
+		"creationDate": "Fri, 10 Jan 2025 06:55:28 GMT",
 		"platform": "V5",
 		"language": "cpp",
 		"slot": 2,
-		"sdkVersion": "V5_20240223_11_00_00",
+		"sdkVersion": "V5_20240802_15_00_00",
 		"cpp": {
 			"includePath": [],
 			"printf_float": true

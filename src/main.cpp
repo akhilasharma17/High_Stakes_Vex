@@ -11,8 +11,9 @@ motor LFdrive(PORT20, ratio18_1);
 motor RFdrive(PORT12, ratio18_1, true);
 motor LBdrive(PORT19, ratio18_1);
 motor RBdrive(PORT11, ratio18_1, true);
-motor ArmMotor(PORT13, ratio18_1, true);
-motor OtherArmMotor(PORT18, ratio18_1, true);
+motor TopChainMotor(PORT13, ratio18_1, true);
+motor GoalMotor(PORT18, ratio18_1, true);
+motor FlexMotor(PORT16, ratio18_1, true);
 digital_out pistonPort(pancakes.ThreeWirePort.H);
 
 motor_group LeftSide = motor_group (LFdrive, LBdrive);
@@ -101,24 +102,19 @@ void PistonToggle(){
     pistonPort.set(!pistonDown);
     pistonDown= !pistonDown; 
 }
-void ArmDown(float fraction){
-    ArmMotor.spin(forward,110.0,vex::velocityUnits::dps);
-    OtherArmMotor.spin(reverse,110.0,vex::velocityUnits::dps);
+void ChainForward(float fraction){
+    TopChainMotor.spin(forward,110.0,vex::velocityUnits::dps);
+    GoalMotor.spin(reverse,110.0,vex::velocityUnits::dps);
     vex::task::sleep(2500*fraction);
-    ArmMotor.setStopping(brakeType::brake);
-    ArmMotor.stop();
-    OtherArmMotor.setStopping(brakeType::brake);
-    OtherArmMotor.stop();
+    TopChainMotor.setStopping(brakeType::brake);
+    TopChainMotor.stop();
 }
-void ArmUp(float fraction){
-    ArmMotor.spin(reverse,350.0,vex::velocityUnits::dps);
-    OtherArmMotor.spin(forward,350.0,vex::velocityUnits::dps);
+void ChainReverse(float fraction){
+    TopChainMotor.spin(reverse,350.0,vex::velocityUnits::dps);
+    GoalMotor.spin(forward,350.0,vex::velocityUnits::dps);
     vex::task::sleep(1500*fraction);
-    ArmMotor.setStopping(brakeType::brake);
-    ArmMotor.stop();
-    OtherArmMotor.setStopping(brakeType::brake);
-    OtherArmMotor.stop();
-
+    TopChainMotor.setStopping(brakeType::brake);
+    TopChainMotor.stop();
 }
 
 
@@ -129,10 +125,10 @@ void pre_auton(void) {
 }
 
 void autonomous(void) {
-    ArmDown(1);
+    ChainForward(1);
     driveForward(1,-100,1375);
-    ArmUp(1.0);
-    ArmDown(0.8);
+    ChainReverse(1.0);
+    ChainForward(0.8);
     driveForward(1,100,1375);
 }
 
@@ -155,18 +151,34 @@ void usercontrol(void) {
   RightSide.spin(vex::forward, -rightSpin, vex::percent);
 
   if (Cotton_candy.ButtonR1.pressing()){
-    ArmMotor.spin(forward,110.0,vex::velocityUnits::dps);
-    OtherArmMotor.spin(reverse,110.0,vex::velocityUnits::dps);
+    TopChainMotor.spin(forward,110.0,vex::velocityUnits::dps);
   }
   else if (Cotton_candy.ButtonL1.pressing()){
-    ArmMotor.spin(reverse,110.0,vex::velocityUnits::dps);
-    OtherArmMotor.spin(forward,110.0,vex::velocityUnits::dps);
+    TopChainMotor.spin(reverse,110.0,vex::velocityUnits::dps);
   }
   else {
-    ArmMotor.setStopping(brakeType::brake);
-    ArmMotor.stop();
-    OtherArmMotor.setStopping(brakeType::brake);
-    OtherArmMotor.stop();
+    TopChainMotor.setStopping(brakeType::brake);
+    TopChainMotor.stop();
+  }
+  if (Cotton_candy.ButtonL2.pressing()){
+    FlexMotor.spin(reverse,110.0,vex::velocityUnits::dps);
+  }
+  else if (Cotton_candy.ButtonR2.pressing()){
+    FlexMotor.spin(forward,110.0,vex::velocityUnits::dps);
+  }
+  else {
+    FlexMotor.setStopping(brakeType::brake);
+    FlexMotor.stop();
+  }
+  if (Cotton_candy.ButtonA.pressing()){
+    GoalMotor.spin(forward,110.0,vex::velocityUnits::dps);
+  }
+  else if (Cotton_candy.ButtonB.pressing()){
+    GoalMotor.spin(reverse,110.0,vex::velocityUnits::dps);
+  }
+  else {
+    GoalMotor.setStopping(brakeType::brake);
+    GoalMotor.stop();
   }
 
 wait(20, msec); // Sleep the task for a short amount of time to
